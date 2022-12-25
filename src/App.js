@@ -4,22 +4,28 @@ import  { useState } from 'react';
 
 function App() {
 
-  const [res, setRes] = useState("");
+  var exp = "";
+  const [display, setDisplay] = useState("");
 
-  //Generates the middle 3 rows.
-  const operators = ['+', '-', '*', '/', '^', '%', '.'];
+  const operators = ['+', '-', '*', '÷', '^', '%', '.'];
 
+  //Delete values.
   const del = (i) => {
-    if (res === '') {
+    if (display === '') {
       return;
     }
-    setRes(res.slice(0, i));
+    exp = exp.slice(0, i);
+    setDisplay(display.slice(0, i));
   }
 
+  //Evaluate expression.
   const evaluate = () => {
-    setRes(eval(res).toString());
+    let value = eval(exp).toString();
+    exp = value;
+    setDisplay(value);
   }
 
+  //Generates the middle 3 rows.
   const generate = () => {
 
     const buttons = [];
@@ -27,60 +33,69 @@ function App() {
     for (let i = 0; i < 3; i++) {
       for (let j = 1; j < 4; j++) {
         buttons.push(
-          <button className='digit' onClick={() => updateRes((3 * i + j).toString())}>{3 * i + j}</button>
+          <button className='digit' onClick={() => updateDisplay((3 * i + j).toString())}>{3 * i + j}</button>
         )
       }
       buttons.push(
-        <button className='op' onClick={() => updateRes(operators[i])}>{operators[i]}</button>
+        <button className='op' onClick={() => updateDisplay(operators[i])}>{operators[i]}</button>
       )
     }
 
     return buttons;
   }
 
-  const updateRes = (value) => {
+  const updateDisplay = (value) => {
 
     //Don't want to start off with an operator.
-    if (res === '' && operators.includes(value))  {
+    if (display === '' && operators.includes(value))  {
       return;
     }
 
     //No consecutive operators.
-    if (operators.includes(value) && operators.includes(res.slice(-1))) {
+    if (operators.includes(value) && operators.includes(display.slice(-1))) {
+      return;
+    }
+
+    //Special case of '÷'
+    if (value === '÷') {
+      exp += '/';
+      setDisplay(display + value);
       return;
     }
 
     //Leading 0
-    if (res === '0' && !operators.includes(value)) {
-      setRes(value);
+    if (display === '0' && !operators.includes(value)) {
+      exp = value;
+      setDisplay(value);
       return;
     }
     
-    setRes(res + value);
+    exp += value;
+    setDisplay(exp);
   }
 
   return (
     <div className="App">
       <div className="calculator">
         <div className="display">
-        <span>{res}</span>
+        <span>{exp}</span>
         </div>
 
         <div className="buttons">
           {/* Top row */}
           <button className='op' onClick={() => del(0)}>C</button>
-          <button className='op' onClick={() => updateRes('^')}>^</button>
-          <button className='op' onClick={() => updateRes('%')}>%</button>
+          <button className='op' onClick={() => updateDisplay('^')}>^</button>
+          <button className='op' onClick={() => updateDisplay('%')}>%</button>
           <button className='op' onClick={() => del(-1)}>DEL</button>
           
           {/* Middle 3 rows. */}
           {generate()}
     
           {/* Bottom row */}
-          <button className='digit' onClick={() => updateRes('0')}>0</button>
-          <button className='op' onClick={() => updateRes('.')}>.</button>
+          <button className='digit' onClick={() => updateDisplay('0')}>0</button>
+          <button className='op' onClick={() => updateDisplay('.')}>.</button>
           <button className='op' onClick={() => evaluate()}>=</button>
-          <button className='op' onClick={() => updateRes('/')}>/</button>
+          <button className='op' onClick={() => updateDisplay('÷')}>÷</button>
         </div>
 
       </div>
