@@ -4,18 +4,25 @@ import  { useState } from 'react';
 
 function App() {
 
-  const [display, setDisplay] = useState('');
-  const [exp, setExp] = useState('');
+  const [display, setDisplay] = useState('0');
+  const [exp, setExp] = useState('0');
 
   const operators = ['+', '-', '*', '÷', '^', '%', '.'];
 
   //Delete values.
-  const del = (i) => {
+  const del = (clearAll) => {
     if (display === '') {
       return;
     }
-    setExp(exp.slice(0, i));
-    setDisplay(display.slice(0, i));
+
+    if (display === 'Infinity' || clearAll || display.length === 1) {
+      setExp('0');
+      setDisplay('0');
+      return;
+    }
+
+    setExp(exp.slice(0, -1));
+    setDisplay(display.slice(0, -1));
   }
 
   //Evaluate expression.
@@ -31,14 +38,14 @@ function App() {
     const buttons = [];
 
     for (let i = 0; i < 3; i++) {
+      buttons.push(
+        <button className='op' onClick={() => update(operators[i])}>{operators[i]}</button>
+      )
       for (let j = 1; j < 4; j++) {
         buttons.push(
           <button className='digit' onClick={() => update((3 * i + j).toString())}>{3 * i + j}</button>
         )
       }
-      buttons.push(
-        <button className='op' onClick={() => update(operators[i])}>{operators[i]}</button>
-      )
     }
 
     return buttons;
@@ -84,19 +91,20 @@ function App() {
 
         <div className="buttons">
           {/* Top row */}
-          <button className='op' onClick={() => del(0)}>C</button>
-          <button className='op' onClick={() => update('^')}>^</button>
-          <button className='op' onClick={() => update('%')}>%</button>
-          <button className='op' onClick={() => del(-1)}>DEL</button>
+          <button className='op' onClick={() => del(true)}>C</button>
+          <button className='op' onClick={() => update('(')}>(</button>
+          <button className='op' onClick={() => update(')')}>)</button>
+          <button className='op' onClick={() => del(false)}>DEL</button>
           
           {/* Middle 3 rows. */}
           {generate()}
     
           {/* Bottom row */}
-          <button className='digit' onClick={() => update('0')}>0</button>
-          <button className='op' onClick={() => update('.')}>.</button>
-          <button className='op' onClick={() => evaluate()}>=</button>
           <button className='op' onClick={() => update('÷')}>÷</button>
+          <button className='digit' onClick={() => update('.')}>.</button>
+          <button className='digit' onClick={() => update('0')}>0</button>
+          <button className='sop' onClick={() => evaluate()}>=</button>
+
         </div>
 
       </div>
