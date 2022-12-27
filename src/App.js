@@ -100,10 +100,10 @@ function App() {
           {generate()}
     
           {/* Bottom row */}
-          <button className='op' onClick={() => update('÷')}>÷</button>
+          <button className='op lcorner' onClick={() => update('÷')}>÷</button>
           <button className='digit' onClick={() => update('.')}>.</button>
           <button className='digit' onClick={() => update('0')}>0</button>
-          <button className='sop' onClick={() => evaluate()}>=</button>
+          <button className='sop rcorner' onClick={() => evaluate()}>=</button>
 
         </div>
 
